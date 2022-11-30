@@ -29,6 +29,10 @@ class GameWindow(arcade.Window):
 
     def on_update(self, delta_time):
         self.player.center_x += self.player_dx
+        if self.player.center_x > 1200:
+            self.player.center_x = 0
+        if self.player.center_x < 0:
+            self.player.center_x = 1200
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.player.center_x = x
