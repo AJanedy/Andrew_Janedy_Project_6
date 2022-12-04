@@ -1,4 +1,5 @@
 from GameOver import GameOverView
+from YouWin import YouWinView
 import arcade
 import random
 # class creation for main call
@@ -15,6 +16,7 @@ class GameView(arcade.View):
         self.death_sound = None
         self.fire = arcade.SpriteList()
         self.enemy_count = 6
+        self.win_sound = None
 # setup function / assigns sprite and starting location to self.player
     def setup(self):
         self.player = arcade.Sprite(":resources:images/animated_characters/robot/robot_climb0.png")
@@ -82,9 +84,13 @@ class GameView(arcade.View):
             if sprite.center_y < 74:
                 self.death_sound = arcade.load_sound(":resources:sounds/gameover1.wav")
                 arcade.play_sound(self.death_sound)
-                #self.game_over = True
                 view = GameOverView()
                 self.window.show_view(view)
+
+        if self.score == 20:
+            self.win_sound = arcade.load_sound((":resources:sounds/phaseJump1.wav"))
+            view = YouWinView()
+            self.window.show_view(view)
 # mouse movement
     def on_mouse_motion(self, x, y, dx, dy):
         self.player.center_x = x
