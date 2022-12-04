@@ -1,12 +1,9 @@
-import time
 from GameOver import GameOverView
 import arcade
 import random
-
 # class creation for main call
 class GameView(arcade.View):
-
-    # initialization of class attributes
+# initialization of class attributes
     def __init__(self):
         super().__init__()
         self.player = None
@@ -18,51 +15,46 @@ class GameView(arcade.View):
         self.death_sound = None
         self.fire = arcade.SpriteList()
         self.enemy_count = 6
-        #self.set_mouse_visible(False)
-
-    # setup function
+# setup function / assigns sprite and starting location to self.player
     def setup(self):
         self.player = arcade.Sprite(":resources:images/animated_characters/robot/robot_climb0.png")
         self.player.center_x = 600
         self.player.center_y = 65
-
     def on_draw(self):
-
+# begins render / draws player/laser/zombie
         arcade.start_render()
 
         self.player.draw()
         self.fire.draw()
         self.enemy1.draw()
-
+# score display
         my_text = arcade.Text(f"Score: {self.score}", 1080, 25, arcade.color.WHITE, 20)
         my_text.draw()
 
         arcade.finish_render()
 
     def on_update(self, delta_time):
-
-
-
+# if statement that continues to add an enemy so that 6 are always on screen
         if len(self.enemy1) < self.enemy_count:
             enemy = arcade.Sprite(":resources:images/animated_characters/zombie/zombie_walk5.png")
             enemy.center_x = random.randint(36, 1164)
             enemy.center_y = 774
             self.enemy1.append(enemy)
-
+# allows for wall pass through
         self.player.center_x += self.player_dx
         if self.player.center_x > 1200:
             self.player.center_x = 0
         if self.player.center_x < 0:
             self.player.center_x = 1200
-
+# moves laser upward
         for sprite in self.fire:
             if sprite.center_y < 800:
                 sprite.center_y += 10
-
+# moves zombies downward
         for sprite in self.enemy1:
             if sprite.center_y > -74:
                 sprite.center_y -= 1
-
+# collision detection
         for sprite in self.fire:
             shot_zombies = arcade.check_for_collision_with_list(sprite, self.enemy1)
             if sprite.center_y >= 750:
@@ -83,10 +75,17 @@ class GameView(arcade.View):
         if zombified_robot:
             self.death_sound = arcade.load_sound(":resources:sounds/gameover1.wav")
             arcade.play_sound(self.death_sound)
+            #self.game_over = True
             view = GameOverView()
             self.window.show_view(view)
 
-
+        for sprite in self.enemy1:
+            if sprite.center_y < 74:
+                self.death_sound = arcade.load_sound(":resources:sounds/gameover1.wav")
+                arcade.play_sound(self.death_sound)
+                #self.game_over = True
+                view = GameOverView()
+                self.window.show_view(view)
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.player.center_x = x
