@@ -23,7 +23,6 @@ class GameView(arcade.View):
     def on_draw(self):
 # begins render / draws player/laser/zombie
         arcade.start_render()
-
         self.player.draw()
         self.fire.draw()
         self.enemy1.draw()
@@ -54,7 +53,7 @@ class GameView(arcade.View):
         for sprite in self.enemy1:
             if sprite.center_y > -74:
                 sprite.center_y -= 1
-# collision detection
+# collision detection, zombie removal, score update
         for sprite in self.fire:
             shot_zombies = arcade.check_for_collision_with_list(sprite, self.enemy1)
             if sprite.center_y >= 750:
@@ -70,7 +69,7 @@ class GameView(arcade.View):
                 enemy.center_x = random.randint(36, 1164)
                 enemy.center_y = 774
                 self.enemy1.append(enemy)
-
+# FIXME: game over collision detection and game over screen
         zombified_robot = arcade.check_for_collision_with_list(self.player, self.enemy1)
         if zombified_robot:
             self.death_sound = arcade.load_sound(":resources:sounds/gameover1.wav")
@@ -78,7 +77,7 @@ class GameView(arcade.View):
             #self.game_over = True
             view = GameOverView()
             self.window.show_view(view)
-
+# game over for sprite past bottom of screen
         for sprite in self.enemy1:
             if sprite.center_y < 74:
                 self.death_sound = arcade.load_sound(":resources:sounds/gameover1.wav")
@@ -86,10 +85,10 @@ class GameView(arcade.View):
                 #self.game_over = True
                 view = GameOverView()
                 self.window.show_view(view)
-
+# mouse movement
     def on_mouse_motion(self, x, y, dx, dy):
         self.player.center_x = x
-
+# mouse click fire
     def on_mouse_press(self, x, y, button, modifiers):
         if len(self.fire) < 5:
             self.fire_sound = arcade.load_sound(":resources:sounds/laser1.wav")
@@ -98,8 +97,7 @@ class GameView(arcade.View):
             fire.center_x = self.player.center_x
             fire.center_y = self.player.center_y + 74
             self.fire.append(fire)
-
-
+#left / right movement and space fire
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.LEFT:
             self.player_dx = -5
@@ -113,11 +111,10 @@ class GameView(arcade.View):
                 fire.center_x = self.player.center_x
                 fire.center_y = self.player.center_y + 74
                 self.fire.append(fire)
-
+# stops left and right movement upon key release
     def on_key_release(self, symbol, modifiers):
         if symbol == arcade.key.LEFT or symbol == arcade.key.RIGHT:
             self.player_dx = 0
-
 
 if __name__ == "__main__":
     import GameDriver
